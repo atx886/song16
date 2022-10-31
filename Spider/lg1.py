@@ -1,91 +1,48 @@
-from telnetlib import EC
+import json
 
-from selenium import webdriver
-import time
-from openpyxl import load_workbook, Workbook
-from selenium.webdriver import ActionChains
-from selenium.webdriver.chrome.options import Options
-import os
+import requests
 
-chrome_options = webdriver.ChromeOptions()
-chrome_options.add_argument('--headless')
-chrome_options.add_argument('--no-sandbox')
-chrome_options.add_argument('--disable-gpu')
-chrome_options.add_argument('--disable-dev-shm-usage')
-chromedriver = "/usr/bin/chromedriver"
-os.environ["webdriver.chrome.driver"] = chromedriver
+url = 'https://jiaobenwang.com/wp-admin/admin-ajax.php'
+url = 'https://jiaobenwang.com/wp-admin/admin-ajax.php'
 
-# options = webdriver.FirefoxOptions()
-# options.set_headless(True)
-# options.add_argument("--headless")  # 设置火狐为headless无界面模式
-# options.add_argument("--disable-gpu")
-# d = webdriver.Firefox(options=options)
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
+head = {
+    """
+    POST /wp-admin/admin-ajax.php HTTP/3
+Host: jiaobenwang.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0
+Accept: */*
+Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2
+Accept-Encoding: gzip, deflate, br
 
-# d = webdriver.Firefox()
-d = webdriver.Chrome()
+Cookie: wordpress_1c1f77de48fa74f1aa1ade161b8a0725=yysyzdnp%7C1667345200%7CnBc5NBYTcHXcTYw2Pa0GzObHWTPiiKt55Pz7ezYFmeb%7Cdacb9c106d759524dd10a83fd1a6922006b8d7a486593d958b897070b5bfaf6a; X_CACHE_KEY=9318a2057b722898ef1092b32b71d791; PHPSESSID=mirk4iuuuo5rqubg634usai2g2; Hm_lvt_d10552eaee0c3b28f92a28fb03a1bf88=1667172362; Hm_lpvt_d10552eaee0c3b28f92a28fb03a1bf88=1667172406; cao_notice_cookie=1; wordpress_logged_in_1c1f77de48fa74f1aa1ade161b8a0725=yysyzdnp%7C1667345200%7CnBc5NBYTcHXcTYw2Pa0GzObHWTPiiKt55Pz7ezYFmeb%7C7230af23d640bdb19bdde18283756307cf3065d2b657691d887670bb072844ce
+    """
 
+    'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+    # 'X-Requested-With': 'XMLHttpRequest',
+    # 'Content-Length': '19',
+    'Origin': 'https://jiaobenwang.com',
+    'Alt-Used': 'jiaobenwang.com',
+    'Connection': 'keep-alive',
+    'Referer': 'https://jiaobenwang.com/',
+    # 'Cookie': 'X_CACHE_KEY=9318a2057b722898ef1092b32b71d791; Hm_lvt_d10552eaee0c3b28f92a28fb03a1bf88=1667172362,1667181189; cao_notice_cookie=1; PHPSESSID=8m8e5g1rodg0maq3lr6u50gjod; Hm_lpvt_d10552eaee0c3b28f92a28fb03a1bf88=1667181288; wordpress_test_cookie=WP%20Cookie%20check',
+    # 'Cookie': 'wordpress_1c1f77de48fa74f1aa1ade161b8a0725=yysyzdnp%7C1667345200%7CnBc5NBYTcHXcTYw2Pa0GzObHWTPiiKt55Pz7ezYFmeb%7Cdacb9c106d759524dd10a83fd1a6922006b8d7a486593d958b897070b5bfaf6a; X_CACHE_KEY=9318a2057b722898ef1092b32b71d791; PHPSESSID=mirk4iuuuo5rqubg634usai2g2; Hm_lvt_d10552eaee0c3b28f92a28fb03a1bf88=1667172362; Hm_lpvt_d10552eaee0c3b28f92a28fb03a1bf88=1667172406; cao_notice_cookie=1; wordpress_logged_in_1c1f77de48fa74f1aa1ade161b8a0725=yysyzdnp%7C1667345200%7CnBc5NBYTcHXcTYw2Pa0GzObHWTPiiKt55Pz7ezYFmeb%7C7230af23d640bdb19bdde18283756307cf3065d2b657691d887670bb072844ce',
+    'Sec-Fetch-Dest': 'empty',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Site': 'same-origin',
+    'TE': 'trailers',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101 Firefox/102.0'
 
-# d.implicitly_wait(5)
+}
 
+data = {
 
-def rw():
-    time.sleep(1)
+    "action": "user_login",
+    "username": "sch1532694569c@163.com",
+    "password": "123456789c"
 
+}
 
-def dl(d):
-    # d.window_handles()
-    d.get('https://jiaobenwang.com/')
-    # WebDriverWait(d, time).until(EC.visibility_of_element_located((By.CLASS_NAME, 'visible_long_after_loading_only')))
-
-    d.find_element_by_xpath('/html/body/div[11]/div/div[1]/button').click()
-
-    # d.switch_to(d.window_handles[1])
-    # for handle in d.window_handles:  # 方法二，始终获得当前最后的窗口，所以多要多次使用
-    #     d.switch_to_window(handle)
-
-    # input()
-    rw()
-
-    d.find_element_by_xpath('//*[@id="navHeight"]/div/div/div[4]/div[1]').click()
-
-    rw()
-    d.find_element_by_xpath('//*[@id="login"]/div/form/div[1]/input').send_keys('sch1532694569c@163.com')
-
-    rw()
-    d.find_element_by_xpath(
-        '//*[@id="login"]/div/form/div[2]/input').send_keys('123456789c')
-    rw()
-    d.find_element_by_xpath(
-        '//*[@id="login"]/div/form/button').click()
-
-    time.sleep(5)
-
-    d.find_element_by_xpath(
-        '/html/body/div[3]/ul/li[1]/a/span').click()
-
-    time.sleep(3)
-    ax = d.find_element_by_xpath('//*[@id="swal2-title"]').text
-    print(ax)
-    return ax
-
-    # 鼠标悬停
-    # # 1、先定位到需要悬停的元素
-    # mte = d.find_element(By.CSS_SELECTOR, '.swal2-confirm')
-    #
-    # # 2、实现鼠标悬停 导入 from selenium.webdriver import ActionChains
-    # # ActionChains(浏览器).move_to_element(需要悬停的元素).perform()
-    # ActionChains(d).move_to_element(mte).perform()
-    #
-    # time.sleep(3)  # 悬停之后，最好等待1s中，悬停过程中，放下鼠标键盘
-    #
-    # # 3、点击悬停后 出现的元素
-    # d.find_element(By.LINK_TEXT, '.swal2-confirm').click()
-
-
-ax = dl(d)
-while ax != '今日已签到，请明日再来':
-    d.quit()
-    d = webdriver.Chrome
-    ax = dl(d)
+r = requests.post(url=url, headers=head, data=data)
+# print(r.content)
+res = json.loads(r.content)
+print(res)
